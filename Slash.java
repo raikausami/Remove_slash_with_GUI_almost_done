@@ -20,13 +20,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.io.*;
+import java.awt.Font;
 import java.net.*;
 
 public class Slash extends JFrame implements ActionListener{
 
     JTextField text1 =null;
-    JTextField text2 = null;
+    JTextArea text2;
     JTextArea label;
+     JTextArea label2;
 
     public static void main(String[] args){
         Slash m = new Slash("sample");
@@ -34,7 +36,10 @@ public class Slash extends JFrame implements ActionListener{
     }
 
     Slash(String title){
-        setBounds(100, 100, 300, 250);
+        int width = 1400;
+        int height =1000;
+
+        setBounds(500, 500, width, height);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -42,57 +47,39 @@ public class Slash extends JFrame implements ActionListener{
 
         Container con = getContentPane();
 
-        text1 = new JTextField("バクスラ消したい文章", 20);
+        text2 = new JTextArea("どうや");
+        text2.setBounds(100, 100, 500, 500);
+        text2.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 16));
+        panel.add(text2,BorderLayout.WEST);
+        text2.setLineWrap(true);
+
+
 
         JButton button = new JButton("変換");
 
         button.setActionCommand("trans");
         button.addActionListener(this);
         label = new JTextArea();
-        panel.add(text1);
+        label.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 16));
+        label.setBounds(600,600,500,500);
+        label.setLineWrap(true);
 
         panel.add(button);
-        panel.add(label);
+        panel.add(label,BorderLayout.EAST);
         Container contentPane = getContentPane();
         contentPane.add(panel, BorderLayout.CENTER);
         setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent e){
-        /*if("trans".equals(e.getActionCommand())){
-            boot_process();
-            System.out.println("e");
-            String str=rem_slash(text1.getText());
-            System.out.println("f");
-            String after=runSample(str);
-            System.out.println(after);
-            System.out.println("g");
-            label.setText(null);
-            label.append(after+"\n");
-        }
-        
-        if("trans".equals(e.getActionCommand())){
-            //boot_process();
-            String str=rem_slash(text1.getText());
-            System.out.println("flag1");
-            String after=runSample(str);
-            System.out.println("flag2");
-            System.out.println(after);
-            label.setText(null);
-            label.append(after+"\n");
-        }*/
+    public void actionPerformed(ActionEvent e){ 
         if("trans".equals(e.getActionCommand())){
             boot_process();
-            String str=rem_slash(text1.getText());
-            System.out.println("flag1");
+            String str=rem_slash(text2.getText());
             String after=runSample(str);
-            System.out.println("flag2");
             System.out.println(after);
             label.setText(null);
             label.append(after+"\n");
         }
-
-
     }
 
    static void setClipboardString(String str) {
@@ -110,7 +97,6 @@ public class Slash extends JFrame implements ActionListener{
     }
 
     static String runSample(String message) {
-        //StringBuffer sb = new StringBuffer("");
         StringBuilder buf = new StringBuilder();
         try{
             Socket socket = new Socket("localhost", 6001);
@@ -121,29 +107,14 @@ public class Slash extends JFrame implements ActionListener{
             DataOutputStream dos = new DataOutputStream(os);
 
             byte[] message_got= message.getBytes();
-            //System.out.println(message_got);
             dos.write(message_got, 0, message_got.length);
-            //System.out.println(message_got);
-            //System.out.println(message_got.length);
             System.out.println("send");
-            //char recv;
-            //String recv = new String(); 
             while(true){
                 byte[] b = new byte[1024]; 
                 if(dis.read(b)==-1) break;
-                //recv = (char)(dis.readByte()); 
-                //String recv = new String(dis.readByte(),StandardChar);
-                //recv = new String(dis.readByte(),"UTF-8");
-                //String recv = new String(dis.readUTF());
                 String recv = new String(b,"UTF-8");
-                //if(recv == '\0') break; 
-                //System.out.println(recv);
                 buf.append(recv);
-                // if(recv==null) break;
-
             }
-            //System.out.println(buf);
-            //System.out.println(recv);
             dis.close();
             dos.close();
             os.close();
